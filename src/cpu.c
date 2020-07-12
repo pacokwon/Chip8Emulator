@@ -66,7 +66,7 @@ void CPU_runOperation(struct CPU* cpu) {
                     break;
                 case 0x00EE:
                     cpu->sp -= 1;
-                    cpu->pc = (cpu->stack)[cpu->sp];
+                    cpu->pc = (cpu->stack)[cpu->sp] + 2;
                     break;
             }
             break;
