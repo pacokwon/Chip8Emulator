@@ -3,6 +3,9 @@
 #include <string.h>
 #include <time.h>
 
+#define WIDTH 64
+#define HEIGHT 32
+
 void CPU_initialize(struct CPU* cpu) {
     cpu->opcode = 0;
     cpu->I = 0;
