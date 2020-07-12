@@ -59,25 +59,30 @@ void CPU_runOperation(struct CPU* cpu) {
     switch (cpu->opcode >> 12) {
         case 0x0:
             switch (cpu->opcode) {
+                // CLS
                 case 0x00E0:
                     CPU_clearDisplay(cpu);
                     cpu->pc += 2;
                     cpu->drawFlag = true;
                     break;
+                // RET
                 case 0x00EE:
                     cpu->sp -= 1;
                     cpu->pc = (cpu->stack)[cpu->sp] + 2;
                     break;
             }
             break;
+        // JP addr
         case 0x1:
             cpu->pc = (cpu->opcode) & 0x0FFF;
             break;
+        // CALL addr
         case 0x2:
             (cpu->stack)[cpu->sp] = cpu->pc;
             cpu->sp += 1;
             cpu->pc = (cpu->opcode) & 0x0FFF;
             break;
+        // SE Vx, byte
         case 0x3: {
             uint8_t x = (cpu->opcode & 0x0F00) >> 8;
             uint16_t kk = cpu->opcode & 0x00FF;
@@ -86,6 +91,7 @@ void CPU_runOperation(struct CPU* cpu) {
                 cpu->pc += 2;
             break;
         }
+        // SNE Vx, byte
         case 0x4: {
             uint8_t x = (cpu->opcode & 0x0F00) >> 8;
             uint16_t kk = cpu->opcode & 0x00FF;
@@ -94,6 +100,7 @@ void CPU_runOperation(struct CPU* cpu) {
                 cpu->pc += 2;
             break;
         }
+        // SE Vx, Vy
         case 0x5: {
             uint8_t x = (cpu->opcode & 0x0F00) >> 8;
             uint8_t y = (cpu->opcode & 0x00F0) >> 4;
