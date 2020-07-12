@@ -12,6 +12,7 @@ void CPU_initialize(struct CPU* cpu) {
     cpu->soundTimer = 0;
     cpu->X = 0;
     cpu->Y = 0;
+    cpu->drawFlag = false;
     memset(cpu->V, 0, sizeof(cpu->V));
     memset(cpu->stack, 0, sizeof(cpu->stack));
     memset(cpu->keys, false, sizeof(cpu->keys));
@@ -57,6 +58,18 @@ void CPU_runOperation(struct CPU* cpu) {
     // match the last 4 bits
     switch (cpu->opcode >> 12) {
         case 0x0:
+            switch (cpu->opcode) {
+                case 0x00E0:
+                    CPU_clearDisplay(cpu);
+                    cpu->pc += 2;
+                    cpu->drawFlag = true;
+                    break;
+                case 0x00EE:
+                    cpu->sp -= 1;
+                    cpu->pc = (cpu->stack)[cpu->sp];
+                    break;
+            }
+            break;
         case 0x1:
         case 0x2:
         case 0x3:

@@ -19,6 +19,7 @@ struct CPU {
     uint8_t fonts[80];
     bool keys[16];
     bool display[32][64];
+    bool drawFlag;
 };
 
 void CPU_runOperation(struct CPU* cpu);
