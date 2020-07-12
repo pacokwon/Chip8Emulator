@@ -109,9 +109,77 @@ void CPU_runOperation(struct CPU* cpu) {
                 cpu->pc += 2;
             break;
         }
+        // LD Vx, byte
         case 0x6:
+            (cpu->V)[(cpu->opcode & 0x0F00) >> 8] = cpu->opcode & 0x00FF;
+            cpu->pc += 2;
+            break;
+        // ADD Vx, byte
         case 0x7:
-        case 0x8:
+            (cpu->V)[(cpu->opcode & 0x0F00) >> 8] += cpu->opcode & 0x00FF;
+            cpu->pc += 2;
+            break;
+        case 0x8: {
+            uint8_t x = (cpu->opcode & 0x0F00) >> 8;
+            uint8_t y = (cpu->opcode & 0x00F0) >> 4;
+
+            switch (cpu->opcode & 0x000F) {
+                // LD Vx, Vy
+                case 0x0:
+                    (cpu->V)[x] = (cpu->V)[y];
+                    break;
+                // OR Vx, Vy
+                case 0x1:
+                    (cpu->V)[x] |= (cpu->V)[y];
+                    break;
+                // AND Vx, Vy
+                case 0x2:
+                    (cpu->V)[x] &= (cpu->V)[y];
+                    break;
+                // XOR Vx, Vy
+                case 0x3:
+                    (cpu->V)[x] ^= (cpu->V)[y];
+                    break;
+                // ADD Vx, Vy
+                case 0x4:
+                    if ((cpu->V)[x] + (cpu->V)[y] > 0xFF)
+                        (cpu->V)[0xF] = 1;
+                    else
+                        (cpu->V)[0xF] = 0;
+                    (cpu->V)[x] += (cpu->V)[y];
+                    break;
+                // SUB Vx, Vy
+                case 0x5:
+                    if ((cpu->V)[x] > (cpu->V)[y])
+                        (cpu->V)[0xF] = 1;
+                    else
+                        (cpu->V)[0xF] = 0;
+
+                    (cpu->V)[x] -= (cpu->V)[y];
+                    break;
+                // SHR Vx
+                case 0x6:
+                    (cpu->V)[0xF] = (cpu->V)[x] & 1;
+                    (cpu->V)[x] >>= 1;
+                    break;
+                // SUBN Vx, Vy
+                case 0x7:
+                    if ((cpu->V)[x] < (cpu->V)[y])
+                        (cpu->V)[0xF] = 1;
+                    else
+                        (cpu->V)[0xF] = 0;
+
+                    (cpu->V)[x] = (cpu->V)[y] - (cpu->V)[x];
+                    break;
+                // SHL Vx
+                case 0xE:
+                    (cpu->V)[0xF] = ((cpu->V)[x] & 0x80) >> 7;
+                    (cpu->V)[x] <<= 1;
+                    break;
+            }
+            cpu->pc += 2;
+            break;
+        }
         case 0x9:
         case 0xA:
         case 0xB:
