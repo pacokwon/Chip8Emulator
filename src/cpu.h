@@ -20,6 +20,7 @@ struct CPU {
     bool keys[16];
     bool display[32][64];
     bool drawFlag;
+    bool playSound;
 };
 
 void CPU_runOperation(struct CPU* cpu);

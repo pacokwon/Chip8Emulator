@@ -16,6 +16,7 @@ void CPU_initialize(struct CPU* cpu) {
     cpu->X = 0;
     cpu->Y = 0;
     cpu->drawFlag = false;
+    cpu->playSound = false;
     memset(cpu->V, 0, sizeof(cpu->V));
     memset(cpu->stack, 0, sizeof(cpu->stack));
     memset(cpu->keys, false, sizeof(cpu->keys));
@@ -339,5 +340,14 @@ void CPU_runOperation(struct CPU* cpu) {
                 }
             }
             break;
+    }
+
+    if (cpu->delayTimer > 0)
+        cpu->delayTimer -= 1;
+
+    if (cpu->soundTimer > 0) {
+        cpu->soundTimer -= 1;
+        if (cpu->soundTimer == 0)
+            cpu->playSound = true;
     }
 }
