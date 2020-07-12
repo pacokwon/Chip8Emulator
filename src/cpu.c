@@ -71,10 +71,37 @@ void CPU_runOperation(struct CPU* cpu) {
             }
             break;
         case 0x1:
+            cpu->pc = (cpu->opcode) & 0x0FFF;
+            break;
         case 0x2:
-        case 0x3:
-        case 0x4:
-        case 0x5:
+            (cpu->stack)[cpu->sp] = cpu->pc;
+            cpu->sp += 1;
+            cpu->pc = (cpu->opcode) & 0x0FFF;
+            break;
+        case 0x3: {
+            uint8_t x = (cpu->opcode & 0x0F00) >> 8;
+            uint16_t kk = cpu->opcode & 0x00FF;
+            cpu->pc += 2;
+            if ((cpu->V)[x] == kk)
+                cpu->pc += 2;
+            break;
+        }
+        case 0x4: {
+            uint8_t x = (cpu->opcode & 0x0F00) >> 8;
+            uint16_t kk = cpu->opcode & 0x00FF;
+            cpu->pc += 2;
+            if ((cpu->V)[x] != kk)
+                cpu->pc += 2;
+            break;
+        }
+        case 0x5: {
+            uint8_t x = (cpu->opcode & 0x0F00) >> 8;
+            uint8_t y = (cpu->opcode & 0x00F0) >> 4;
+            cpu->pc += 2;
+            if ((cpu->V)[x] == (cpu->V)[y])
+                cpu->pc += 2;
+            break;
+        }
         case 0x6:
         case 0x7:
         case 0x8:
