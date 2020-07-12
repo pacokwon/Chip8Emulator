@@ -183,12 +183,161 @@ void CPU_runOperation(struct CPU* cpu) {
             cpu->pc += 2;
             break;
         }
+        // SNE Vx, Vy
         case 0x9:
+            cpu->pc += 2;
+            if ((cpu->V)[(cpu->opcode & 0x0F00) >> 8] != (cpu->V)[(cpu->opcode & 0x00F0) >> 4])
+                cpu->pc += 2;
+            break;
+        // LD I, addr
         case 0xA:
+            cpu->I = cpu->opcode & 0x0FFF;
+            cpu->pc += 2;
+            break;
+        // JP V0, addr
         case 0xB:
+            cpu->pc = (cpu->V)[0] + cpu->opcode & 0x0FFF;
+            break;
+        // RND Vx, byte
         case 0xC:
-        case 0xD:
+            (cpu->V)[(cpu->opcode & 0x0F00) >> 8] = (cpu->opcode & 0x00FF) & (rand() % 0xFF);
+            cpu->pc += 2;
+            break;
+        // DRW Vx, Vy, nibble
+        case 0xD: {
+            uint8_t x = (cpu->opcode & 0x0F00) >> 8;
+            uint8_t y = (cpu->opcode & 0x00F0) >> 4;
+            uint8_t n = (cpu->opcode & 0x000F);
+
+            (cpu->V)[0xF] = 0;
+            for (int h = 0; h < n; h++) {
+                uint8_t sprite = (cpu->memory)[cpu->I + h];
+
+                for (int w = 0; w < 8; w++) {
+                    uint8_t px = ((cpu->V)[x] + w) % WIDTH;
+                    uint8_t py = ((cpu->V)[y] + h) % HEIGHT;
+
+                    // if XOR'ing causes any pixels to be erased, VF is set to 1, otherwise 0
+                    // erased: 1 -> 0. display has to be 1, and it has to become 0
+                    // this happens only when both the display's pixel and sprite's pixel are 1
+                    /*
+                    display pixel | result
+                     0       0    |  0
+                     0       1    |  1
+                     1       0    |  1
+                     1       1    |  0
+                    */
+
+                    // if sprite's pixel is bright
+                    if (sprite & (0x80 >> w)) {
+                        // if display's pixel is also bright, then
+                        if ((cpu->display)[py][px])
+                            (cpu->V)[0xF] = 1;
+
+                        // display's pixel only changes when sprite's pixel is bright
+                        (cpu->display)[py][px] ^= 1;
+                    }
+                }
+            }
+            cpu->drawFlag = true;
+            cpu->pc += 2;
+            break;
+        }
         case 0xE:
+            switch (cpu->opcode & 0x00FF) {
+                // SKP Vx
+                case 0x9E:
+                    cpu->pc += 2;
+                    if ((cpu->keys)[(cpu->opcode & 0x0F00) >> 8])
+                        cpu->pc += 2;
+                    break;
+                // SKNP Vx
+                case 0xA1:
+                    cpu->pc += 2;
+                    if (!(cpu->keys)[(cpu->opcode & 0x0F00) >> 8])
+                        cpu->pc += 2;
+                    break;
+            }
+            break;
         case 0xF:
+            switch (cpu->opcode & 0x00FF) {
+                // LD Vx, DT
+                case 0x07:
+                    (cpu->V)[(cpu->opcode & 0x0F00) >> 8] = cpu->delayTimer;
+                    cpu->pc += 2;
+                    break;
+                // LD Vx, K
+                case 0x0A: {
+                    bool pressed = false;
+
+                    for (int i = 0; i < 16; i++)
+                        if ((cpu->keys)[i]) {
+                            (cpu->V)[(cpu->opcode & 0x0F00) >> 8] = i;
+                            pressed = true;
+                        }
+
+                    if (pressed)
+                        cpu->pc += 2;
+                    else
+                        return;
+                    break;
+                }
+                // LD DT, Vx
+                case 0x15:
+                    cpu->delayTimer = (cpu->V)[(cpu->opcode & 0x0F00) >> 8];
+                    cpu->pc += 2;
+                    break;
+                // LD ST, Vx
+                case 0x18:
+                    cpu->soundTimer = (cpu->V)[(cpu->opcode & 0x0F00) >> 8];
+                    cpu->pc += 2;
+                    break;
+                // ADD I, Vx
+                case 0x1E:
+                    if (cpu->I + (cpu->V)[(cpu->opcode & 0x0F00) >> 8] > 0xFF)
+                        (cpu->V)[0xF] = 1;
+                    else
+                        (cpu->V)[0xF] = 0;
+                    cpu->I += (cpu->V)[(cpu->opcode & 0x0F00) >> 8];
+                    cpu->pc += 2;
+                    break;
+                // LD F, Vx
+                case 0x29:
+                    cpu->I = (cpu->V)[(cpu->opcode & 0x0F00) >> 8] * 5;
+                    cpu->pc += 2;
+                    break;
+                // LD B, Vx
+                case 0x33: {
+                    uint8_t vx = (cpu->V)[(cpu->opcode & 0x0F00) >> 8];
+                    (cpu->memory)[cpu->I + 0] = vx / 100;
+                    (cpu->memory)[cpu->I + 1] = (vx / 10) % 10;
+                    (cpu->memory)[cpu->I + 2] = vx % 10;
+                    cpu->pc += 2;
+                    break;
+                }
+                // LD [I], Vx
+                case 0x55: {
+                    uint8_t x = (cpu->opcode & 0x0F00) >> 8;
+
+                    for (int i = 0; i <= x; i++)
+                        (cpu->V)[i] = (cpu->memory)[cpu->I + i];
+
+                    cpu->I += x + 1;
+                    cpu->pc += 2;
+                    break;
+                }
+                // LD Vx, [I]
+                case 0x65: {
+                    uint8_t x = (cpu->opcode & 0x0F00) >> 8;
+
+                    for (int i = 0; i <= x; i++)
+                        (cpu->memory)[cpu->I + i] = (cpu->V)[i];
+
+                    cpu->I += x + 1;
+                    cpu->pc += 2;
+                    break;
+                }
+            }
+            break;
     }
 }
