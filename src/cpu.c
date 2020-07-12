@@ -50,3 +50,27 @@ void CPU_clearDisplay(struct CPU* cpu) {
     memset(cpu->display, false, sizeof(cpu->display));
 }
 
+void CPU_runOperation(struct CPU* cpu) {
+    // opcode is 16 bits
+    cpu->opcode = (cpu->memory)[cpu->pc] << 8 | (cpu->memory)[cpu->pc + 1];
+
+    // match the last 4 bits
+    switch (cpu->opcode >> 12) {
+        case 0x0:
+        case 0x1:
+        case 0x2:
+        case 0x3:
+        case 0x4:
+        case 0x5:
+        case 0x6:
+        case 0x7:
+        case 0x8:
+        case 0x9:
+        case 0xA:
+        case 0xB:
+        case 0xC:
+        case 0xD:
+        case 0xE:
+        case 0xF:
+    }
+}
