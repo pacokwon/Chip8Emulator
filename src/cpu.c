@@ -45,3 +45,8 @@ void CPU_loadROM(struct CPU* cpu, const unsigned char* buffer) {
     CPU_initialize(cpu);
     memcpy(cpu->memory, buffer, 256);
 }
+
+void CPU_clearDisplay(struct CPU* cpu) {
+    memset(cpu->display, false, sizeof(cpu->display));
+}
+
