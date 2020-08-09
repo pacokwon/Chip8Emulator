@@ -1,7 +1,4 @@
 #include "emulator.h"
-#include "cpu.h"
-#include "display.h"
-#include "input.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>

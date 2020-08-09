@@ -4,8 +4,8 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-int WIDTH = 1280;
-int HEIGHT = 640;
+extern int SCREEN_WIDTH;
+extern int SCREEN_HEIGHT;
 
 struct Display {
     SDL_Window* window;

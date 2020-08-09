@@ -1,8 +1,11 @@
 #include "display.h"
 
+int SCREEN_WIDTH = 1280;
+int SCREEN_HEIGHT = 640;
+
 void DSP_draw(struct Display* display, bool screen[32][64]) {
-    int wUnit = WIDTH / 64;
-    int hUnit = HEIGHT / 32;
+    int wUnit = SCREEN_WIDTH / 64;
+    int hUnit = SCREEN_HEIGHT / 32;
 
     SDL_SetRenderDrawColor(display->renderer, 0x00, 0x00, 0x00, 0xFF); // black
     SDL_RenderClear(display->renderer);
@@ -26,7 +29,7 @@ void DSP_init(struct Display* display) {
         return;
     }
 
-    display->window = SDL_CreateWindow("Chip8 Emulator", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL);
+    display->window = SDL_CreateWindow("Chip8 Emulator", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
     if (display->window == NULL) {
         printf("%s", SDL_GetError());
         return;
