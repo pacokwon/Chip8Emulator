@@ -6,7 +6,7 @@
 #define WIDTH 64
 #define HEIGHT 32
 
-void CPU_initialize(struct CPU* cpu) {
+void CPU_init(struct CPU* cpu) {
     cpu->opcode = 0;
     cpu->I = 0;
     cpu->sp = 0;
@@ -47,7 +47,7 @@ void CPU_initialize(struct CPU* cpu) {
 }
 
 void CPU_loadROM(struct CPU* cpu, const unsigned char* buffer) {
-    CPU_initialize(cpu);
+    CPU_init(cpu);
     memcpy(cpu->memory, buffer, 256);
 }
 

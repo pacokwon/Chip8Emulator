@@ -24,7 +24,7 @@ struct CPU {
 };
 
 void CPU_runOperation(struct CPU* cpu);
-void CPU_initialize(struct CPU* cpu);
+void CPU_init(struct CPU* cpu);
 void CPU_clearDisplay(struct CPU* cpu);
 void CPU_loadROM(struct CPU* cpu, const unsigned char buffer[512]);
 
