@@ -1,2 +1,3 @@
 gcc-9
 -I/usr/local/include
+-Iinclude
