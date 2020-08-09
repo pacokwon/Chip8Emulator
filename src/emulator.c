@@ -9,8 +9,7 @@
 
 #define MEMORY_SIZE 4096
 
-void EMU_run(const char* filename) {
-    struct Emulator* emu = malloc(sizeof(struct Emulator));
+void EMU_run(struct Emulator* emu, const char* filename) {
     EMU_init(emu);
     EMU_load(emu, filename);
 
@@ -58,4 +57,11 @@ void EMU_init(struct Emulator* emu) {
     CPU_init(emu->cpu);
     DSP_init(emu->display);
     INP_init(emu->input);
+}
+
+void EMU_close(struct Emulator* emu) {
+    free(emu->cpu);
+    DSP_close(emu->display);
+    free(emu->display);
+    free(emu->input);
 }

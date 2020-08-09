@@ -11,8 +11,9 @@ struct Emulator {
     struct Input* input;
 };
 
-void EMU_run(const char* filename);
+void EMU_run(struct Emulator* emu, const char* filename);
 void EMU_load(struct Emulator* emu, const char* filename);
 void EMU_init(struct Emulator* emu);
+void EMU_close(struct Emulator* emu);
 
 #endif
