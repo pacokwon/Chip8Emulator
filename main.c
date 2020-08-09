@@ -1,4 +1,6 @@
-#include "src/emulator.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include "emulator.h"
 
 int main(int argc, char** argv) {
     if (argc >= 2) {
