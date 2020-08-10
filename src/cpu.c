@@ -249,13 +249,13 @@ void CPU_runOperation(struct CPU* cpu) {
                 // SKP Vx
                 case 0x9E:
                     cpu->pc += 2;
-                    if ((cpu->keys)[(cpu->opcode & 0x0F00) >> 8])
+                    if ((cpu->keys)[(cpu->V)[(cpu->opcode & 0x0F00) >> 8]])
                         cpu->pc += 2;
                     break;
                 // SKNP Vx
                 case 0xA1:
                     cpu->pc += 2;
-                    if (!(cpu->keys)[(cpu->opcode & 0x0F00) >> 8])
+                    if (!(cpu->keys)[(cpu->V)[(cpu->opcode & 0x0F00) >> 8]])
                         cpu->pc += 2;
                     break;
             }
