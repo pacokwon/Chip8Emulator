@@ -9,7 +9,7 @@ void DSP_draw(struct Display* display, bool screen[32][64]) {
 
     SDL_SetRenderDrawColor(display->renderer, 0x00, 0x00, 0x00, 0xFF); // black
     SDL_RenderClear(display->renderer);
-    SDL_SetRenderDrawColor(display->renderer, 0x00, 0x00, 0x00, 0xFF); // white
+    SDL_SetRenderDrawColor(display->renderer, 0xFF, 0xFF, 0xFF, 0xFF); // white
 
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 64; j++) {
