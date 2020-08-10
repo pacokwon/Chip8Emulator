@@ -10,7 +10,8 @@ void EMU_run(struct Emulator* emu, const char* filename) {
     EMU_init(emu);
     EMU_load(emu, filename);
 
-    while (true) {
+    bool isRunning = true;
+    while (isRunning) {
         CPU_runOperation(emu->cpu);
 
         if (emu->cpu->drawFlag) {
@@ -24,8 +25,8 @@ void EMU_run(struct Emulator* emu, const char* filename) {
         }
 
         INP_setKeys(emu->input, emu->cpu->keys);
-
-        usleep(1200 * 1000);
+        isRunning = !emu->input->quit;
+        usleep(1200);
     }
 }
 
