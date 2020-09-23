@@ -26,7 +26,7 @@ void EMU_run(struct Emulator* emu, const char* filename) {
 
         INP_setKeys(emu->input, emu->cpu->keys);
         isRunning = !emu->input->quit;
-        usleep(1200);
+        usleep(600);
     }
 }
 
