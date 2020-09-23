@@ -146,11 +146,11 @@ void CPU_runOperation(struct CPU* cpu) {
                     break;
                 // ADD Vx, Vy
                 case 0x4:
+                    (cpu->V)[x] += (cpu->V)[y];
                     if ((cpu->V)[x] + (cpu->V)[y] > 0xFF)
                         (cpu->V)[0xF] = 1;
                     else
                         (cpu->V)[0xF] = 0;
-                    (cpu->V)[x] += (cpu->V)[y];
                     break;
                 // SUB Vx, Vy
                 case 0x5:
@@ -236,7 +236,8 @@ void CPU_runOperation(struct CPU* cpu) {
                             (cpu->V)[0xF] = 1;
 
                         // display's pixel only changes when sprite's pixel is bright
-                        (cpu->display)[py][px] ^= 1;
+                        /* (cpu->display)[py][px] ^= 1; */
+                        (cpu->display)[py][px] = !(cpu->display)[py][px];
                     }
                 }
             }
@@ -295,7 +296,7 @@ void CPU_runOperation(struct CPU* cpu) {
                     break;
                 // ADD I, Vx
                 case 0x1E:
-                    if (cpu->I + (cpu->V)[(cpu->opcode & 0x0F00) >> 8] > 0xFF)
+                    if (cpu->I + (cpu->V)[(cpu->opcode & 0x0F00) >> 8] > 0xFFF)
                         (cpu->V)[0xF] = 1;
                     else
                         (cpu->V)[0xF] = 0;
@@ -323,7 +324,6 @@ void CPU_runOperation(struct CPU* cpu) {
                     for (int i = 0; i <= x; i++)
                         (cpu->V)[i] = (cpu->memory)[cpu->I + i];
 
-                    cpu->I += x + 1;
                     cpu->pc += 2;
                     break;
                 }
@@ -334,7 +334,6 @@ void CPU_runOperation(struct CPU* cpu) {
                     for (int i = 0; i <= x; i++)
                         (cpu->memory)[cpu->I + i] = (cpu->V)[i];
 
-                    cpu->I += x + 1;
                     cpu->pc += 2;
                     break;
                 }
